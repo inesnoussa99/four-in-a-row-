@@ -1,4 +1,4 @@
-
+:- use_module(library(random)).
 :- dynamic board/1.
 
 applyIt(Old,New) :- retract(board(Old)), assert(board(New)).
