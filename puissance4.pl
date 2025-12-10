@@ -16,7 +16,7 @@ displayBoard :-
     writeln(' -----------------'), 
     writeln('  1 2 3 4 5 6 7'),
     nl.
-
+    
 
 ia(Board, Col, _) :-
     repeat,
