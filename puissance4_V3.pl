@@ -131,15 +131,15 @@ blocking_move(Board, Opponent, Col) :-
     playMove(Board, Col, NewBoard, Opponent),
     gameover(NewBoard, Opponent).
 
-preferred_moves([4,3,5,2,6,1,7]).
+preferred_move(_, Col) :-
+    member(Col, [4, 3, 5, 2, 6, 1, 7]).
 
 ia(Board, Col) :-
     winning_move(Board, 'o', Col), !.
 ia(Board, Col) :-
     blocking_move(Board, 'x', Col), !.
 ia(Board, Col) :-
-    preferred_moves(Cols),
-    member(Col, Cols),
+    preferred_move(Board,Col),
     valid_col(Board, Col),
     !.
 
