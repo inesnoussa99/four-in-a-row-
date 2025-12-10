@@ -1,3 +1,5 @@
+:- use_module(library(lists)).
+:- use_module(library(apply)).
 :- dynamic board/1.
 
 applyIt(Old,New) :- retract(board(Old)), assert(board(New)).
