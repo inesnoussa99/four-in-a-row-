@@ -6,7 +6,7 @@
 :- use_module(library(lists)).
 
 % Profondeur par défaut
-search_depth(8).
+search_depth(4).
 
 % =========================================================
 % WRAPPER compatible avec TON game.pl
