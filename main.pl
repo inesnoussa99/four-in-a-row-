@@ -11,7 +11,6 @@
 % Nouvelles IA
 :- [ia_alphabeta].
 :- [ia_alphabeta_avance].
-:- [ia_mcts].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Saisie des joueurs    %
@@ -24,7 +23,6 @@
 %   ia_minimax          -> IA minimax
 %   ia_alphabeta        -> IA alpha-beta
 %   ia_alphabeta_avance -> IA iterative deepening / alpha-beta avancee
-%   ia_mcts             -> IA MCTS (Monte Carlo)
 
 choose_player(PlayerSymbol, Type) :-
     format("Configure ~w :~n", [PlayerSymbol]),
@@ -34,7 +32,6 @@ choose_player(PlayerSymbol, Type) :-
     writeln('  4. IA minimax'),
     writeln('  5. IA alpha-beta'),
     writeln('  6. IA alpha-beta avancee'),
-    writeln('  7. IA MCTS (Monte Carlo)'),
     write('Your choice: '),
     read(Choice),
     map_choice_to_type(Choice, Type), !.
@@ -49,7 +46,7 @@ map_choice_to_type(3, ia_v2).
 map_choice_to_type(4, ia_minimax).
 map_choice_to_type(5, ia_alphabeta).
 map_choice_to_type(6, ia_alphabeta_avance).
-map_choice_to_type(7, ia_mcts).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %     Coup des joueurs    %
@@ -104,9 +101,6 @@ get_move(ia_alphabeta_avance, Player, Board, Col) :-
     call_ai(ia_alphabeta_avance, Board, Player, Col),
     format("IA alpha-beta avancee (~w) plays in column ~w~n", [Player, Col]).
 
-get_move(ia_mcts, Player, Board, Col) :-
-    call_ai(ia_mcts, Board, Player, Col),
-    format("IA MCTS (~w) plays in column ~w~n", [Player, Col]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %      Boucle de jeu      %
