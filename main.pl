@@ -10,7 +10,7 @@
 
 % Nouvelles IA
 :- [ia_alphabeta].
-:- [ia_alphabeta_avance].
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Saisie des joueurs    %
@@ -31,7 +31,6 @@ choose_player(PlayerSymbol, Type) :-
     writeln('  3. IA v2 (winning move if possible)'),
     writeln('  4. IA minimax'),
     writeln('  5. IA alpha-beta'),
-    writeln('  6. IA alpha-beta avancee'),
     write('Your choice: '),
     read(Choice),
     map_choice_to_type(Choice, Type), !.
@@ -45,7 +44,6 @@ map_choice_to_type(2, ia_v1).
 map_choice_to_type(3, ia_v2).
 map_choice_to_type(4, ia_minimax).
 map_choice_to_type(5, ia_alphabeta).
-map_choice_to_type(6, ia_alphabeta_avance).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,9 +95,6 @@ get_move(ia_alphabeta, Player, Board, Col) :-
     call_ai(ia_alphabeta, Board, Player, Col),
     format("IA alpha-beta (~w) plays in column ~w~n", [Player, Col]).
 
-get_move(ia_alphabeta_avance, Player, Board, Col) :-
-    call_ai(ia_alphabeta_avance, Board, Player, Col),
-    format("IA alpha-beta avancee (~w) plays in column ~w~n", [Player, Col]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%

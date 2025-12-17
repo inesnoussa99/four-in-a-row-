@@ -7,7 +7,7 @@
 %   - 'o' = IA (max), 'x' = humain (min).
 
 % Profondeur de recherche du minimax
-depth(1).
+depth(4).
 
 % ia_minimax(+Board, -BestCol)
 % Choisit la meilleure colonne selon minimax (vue du joueur 'o').

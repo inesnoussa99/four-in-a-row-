@@ -1,15 +1,17 @@
 % =========================
 % File: ia_alphabeta.pl
+% IA alpha-beta (Negamax) avec heuristique (même idée que ia_minimax)
+% Compatible avec TON game.pl
 % =========================
 
 :- [game].
-:- use_module(library(lists)).
+:- use_module(library(pairs)).   % pairs_values/2
 
 % Profondeur par défaut
-search_depth(4).
+search_depth(6).
 
 % =========================================================
-% WRAPPER compatible avec TON game.pl
+% WRAPPERS compatibles avec ton game.pl
 % =========================================================
 
 valid_moves(Board, Moves) :-
@@ -25,15 +27,15 @@ apply_move(Board, Player, Col, NewBoard) :-
 opponent(Player, Opp) :-
     changePlayer(Player, Opp).
 
-% terminal win si le joueur qui vient de jouer a gagné
-is_win(BoardAfterMove) :-
-    gameover(BoardAfterMove).
-
 is_draw(Board) :-
     board_full(Board).
 
+% IMPORTANT : victoire du joueur P (et pas juste "gameover/1")
+is_win(Board, P) :-
+    win_player(Board, P).
+
 % =========================================================
-% API attendue par le main :
+% API attendue :
 %   ia_alphabeta(+Board, +Player, -BestCol)
 % =========================================================
 
@@ -51,8 +53,7 @@ alphabeta_root([], _Board, _Player, _D, _A, _B, BestSoFar, BestSoFar, -1000000).
 alphabeta_root([Col|Cols], Board, Player, D, A, B, BestSoFar, BestCol, BestScore) :-
     apply_move(Board, Player, Col, B2),
 
-    % si ce coup gagne immédiatement, on renvoie un score énorme
-    ( is_win(B2) ->
+    ( is_win(B2, Player) ->
         Score is 100000
     ; is_draw(B2) ->
         Score is 0
@@ -61,7 +62,7 @@ alphabeta_root([Col|Cols], Board, Player, D, A, B, BestSoFar, BestCol, BestScore
         D1 is D - 1,
         alphabeta(B2, Opp, D1, -B, -A, ScoreNeg),
         Score is -ScoreNeg
-    ;   evaluate(B2, Score)
+    ;   evaluate(B2, Player, Score)   % <-- heuristique branchée ici
     ),
 
     ( Score > A ->
@@ -73,12 +74,11 @@ alphabeta_root([Col|Cols], Board, Player, D, A, B, BestSoFar, BestCol, BestScore
     ;   alphabeta_root(Cols, Board, Player, D, A1, B, Best1, BestCol, BestScore)
     ).
 
-alphabeta(Board, _Player, _D, _A, _B, Score) :-
-    is_draw(Board), !,
-    Score is 0.
+alphabeta(Board, _Player, _D, _A, _B, 0) :-
+    is_draw(Board), !.
 
-alphabeta(Board, _Player, 0, _A, _B, Score) :- !,
-    evaluate(Board, Score).
+alphabeta(Board, Player, 0, _A, _B, Score) :- !,
+    evaluate(Board, Player, Score).
 
 alphabeta(Board, Player, D, A, B, BestScore) :-
     valid_moves(Board, Moves),
@@ -94,7 +94,7 @@ ab_loop([], _Board, _P, _Opp, _D1, _A, _B, Best, Best).
 ab_loop([Col|Cols], Board, Player, Opp, D1, A, B, BestSoFar, BestOut) :-
     apply_move(Board, Player, Col, B2),
 
-    ( is_win(B2) ->
+    ( is_win(B2, Player) ->
         Score is 100000
     ; is_draw(B2) ->
         Score is 0
@@ -122,8 +122,106 @@ center_dist(Col, Dist) :-
     Dist is abs(Col - 4).
 
 % =========================================================
-% Evaluation (placeholder)
-% -> tu peux brancher ton heuristique minimax ici
+% HEURISTIQUE (même logique que ia_minimax, mais "générique joueur")
+% Score positif = bon pour Player, négatif = bon pour adversaire
 % =========================================================
 
-evaluate(_Board, 0).
+evaluate(Board, Player, Score) :-
+    opponent(Player, Opp),
+    heuristic_for(Board, Player, SP),
+    heuristic_for(Board, Opp, SO),
+    Score is SP - SO.
+
+heuristic_for(Board, P, Score) :-
+    findall(S, score_lines_for(Board, P, S), Scores),
+    sum_list_local(Scores, Score).
+
+score_lines_for(Board, P, Score) :-
+    ( get_line_h(Board, Line)
+    ; get_line_v(Board, Line)
+    ; get_line_d(Board, Line)
+    ),
+    score_4_cells_for(Line, P, Score).
+
+% Fenêtre de 4 cases, score du point de vue de P
+score_4_cells_for(List4, P, Score) :-
+    opponent(P, Opp),
+    count_occ(P,   List4, CP),
+    count_occ(Opp, List4, CO),
+    count_occ('.', List4, CE),
+    ( CO > 0, CP > 0 ->
+        Score = 0          % fenêtre "bloquée" (mix)
+    ; CP =:= 4 ->
+        Score = 1000       % victoire (théorique)
+    ; CO =:= 4 ->
+        Score = -1000
+    ; CP =:= 3, CE =:= 1 ->
+        Score = 50
+    ; CP =:= 2, CE =:= 2 ->
+        Score = 10
+    ; CO =:= 3, CE =:= 1 ->
+        Score = -50
+    ; CO =:= 2, CE =:= 2 ->
+        Score = -10
+    ;   Score = 0
+    ).
+
+count_occ(X, L, N) :- include(==(X), L, R), length(R, N).
+
+sum_list_local([], 0).
+sum_list_local([H|T], S) :-
+    sum_list_local(T, S1),
+    S is H + S1.
+
+% =========================================================
+% Génération des fenêtres de 4 (comme dans ia_minimax)
+% =========================================================
+
+get_line_h(Board, [A,B,C,D]) :-
+    member(Row, Board),
+    append(_, [A,B,C,D|_], Row).
+
+get_line_v(Board, [A,B,C,D]) :-
+    column(Board, _, ColList),
+    append(_, [A,B,C,D|_], ColList).
+
+get_line_d(Board, Diag) :-
+    ( win_d1_gen(Board, Diag)
+    ; win_d2_gen(Board, Diag)
+    ).
+
+win_d1_gen(Board, [A,B,C,D]) :-
+    between(1,3,Row),
+    between(1,4,Col),
+    diag_down(Board, Row, Col, [A,B,C,D]).
+
+win_d2_gen(Board, [A,B,C,D]) :-
+    between(4,6,Row),
+    between(1,4,Col),
+    diag_up(Board, Row, Col, [A,B,C,D]).
+
+% =========================================================
+% Détection de victoire (copie de ia_minimax)
+% =========================================================
+
+win_player(Board, Player) :-
+    ( win_h_p(Board, Player)
+    ; win_v_p(Board, Player)
+    ; win_d1_p(Board, Player)
+    ; win_d2_p(Board, Player)
+    ), !.
+
+win_h_p(Board, P) :-
+    member(Row, Board),
+    append(_, [P,P,P,P|_], Row).
+
+win_v_p(Board, P) :-
+    between(1,7,C),
+    column(Board, C, Col),
+    append(_, [P,P,P,P|_], Col).
+
+win_d1_p(Board, P) :-
+    win_d1_gen(Board, [P,P,P,P]).
+
+win_d2_p(Board, P) :-
+    win_d2_gen(Board, [P,P,P,P]).
