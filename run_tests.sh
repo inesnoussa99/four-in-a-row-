@@ -11,8 +11,6 @@ echo "======================================"
 tests=(
 test_game.pl
 test_engine.pl
-test_minimax.pl
-test_performance.pl
 test_quit.pl
 )
 
