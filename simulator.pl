@@ -56,7 +56,7 @@ print_summary(summary(WX, WO, D)) :-
 update_counts(win('x'), WX0, WO0, D0, WX1, WO0, D0) :- WX1 is WX0 + 1.
 update_counts(win('o'), WX0, WO0, D0, WX0, WO1, D0) :- WO1 is WO0 + 1.
 update_counts(draw,     WX0, WO0, D0, WX0, WO0, D1) :- D1 is D0 + 1.
-% sécurité (au cas où)
+% securite (au cas où)
 update_counts(_, WX, WO, D, WX, WO, D).
 
 % =========================
@@ -145,7 +145,7 @@ swap_cell('.','.').
 % =========================
 
 winner_player(Board, P) :-
-    ( P = 'x' ; P = 'o' ),              % ✅ pas '.'
+    ( P = 'x' ; P = 'o' ),              
     ( win_h(Board, P)
     ; win_v(Board, P)
     ; win_d1(Board, P)

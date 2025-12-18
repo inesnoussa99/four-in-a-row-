@@ -1,5 +1,5 @@
 % main.pl
-% Point d'entrée du programme :
+% Point d entrée du programme :
 % - On choisit le type de joueur pour 'x' (Joueur 1) et pour 'o' (Joueur 2)
 % - Puis on lance la partie avec ces deux "contrôleurs" (humain ou IA).
 
@@ -67,7 +67,7 @@ ask_move_human(Player, Board, Col) :-
 get_player_type('x', TypeP1, _TypeP2, TypeP1).
 get_player_type('o', _TypeP1, TypeP2, TypeP2).
 
-% ------- Helper: appel d'une IA (sans modules)
+% ------- Helper: appel d une IA (sans modules)
 % Appelle directement Type(Board, Player, Col)
 % ex: ia_alphabeta(Board, Player, Col).
 call_ai(Type, Board, Player, Col) :-

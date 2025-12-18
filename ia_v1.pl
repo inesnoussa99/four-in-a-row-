@@ -5,7 +5,7 @@
 
 % ia_v1(+Board, +Player, -Col)
 % Player est là pour signature future (si tu veux faire une IA qui dépend du joueur),
-% ici il n'est pas utilisé.
+% ici il n est pas utilisé.
 ia_v1(Board, _Player, Col) :-
     repeat,
     random_between(1, 7, Col),

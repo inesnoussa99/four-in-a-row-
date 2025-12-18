@@ -265,7 +265,7 @@ p_ab_loop([Col|Cols], Board, Player, Opp, D1, A, B, BestSoFar, BestOut) :-
     ).
 
 % =========================================================
-% Move ordering : centre d'abord
+% Move ordering : centre d abord
 % =========================================================
 
 order_center_first(Moves, Ordered) :-

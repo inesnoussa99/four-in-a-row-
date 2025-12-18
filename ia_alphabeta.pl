@@ -1,7 +1,6 @@
 % =========================
 % File: ia_alphabeta.pl
-% IA alpha-beta (Negamax) avec heuristique (même idée que ia_minimax)
-% Compatible avec TON game.pl
+% IA alpha-beta (Negamax) avec heuristique (meme idée que ia_minimax)
 % =========================
 
 :- [game].
@@ -10,9 +9,7 @@
 % Profondeur par défaut
 search_depth(6).
 
-% =========================================================
-% WRAPPERS compatibles avec ton game.pl
-% =========================================================
+
 
 valid_moves(Board, Moves) :-
     findall(Col,
@@ -110,7 +107,7 @@ ab_loop([Col|Cols], Board, Player, Opp, D1, A, B, BestSoFar, BestOut) :-
     ).
 
 % =========================================================
-% Move ordering : centre d'abord (colonnes 1..7)
+% Move ordering : centre d abord (colonnes 1..7)
 % =========================================================
 
 order_moves_center_first(Moves, Ordered) :-
@@ -122,7 +119,7 @@ center_dist(Col, Dist) :-
     Dist is abs(Col - 4).
 
 % =========================================================
-% HEURISTIQUE (même logique que ia_minimax, mais "générique joueur")
+% HEURISTIQUE (meme logique que ia_minimax, mais "générique joueur")
 % Score positif = bon pour Player, négatif = bon pour adversaire
 % =========================================================
 

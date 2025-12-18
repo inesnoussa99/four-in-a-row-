@@ -3,7 +3,7 @@
 
 :- dynamic board/1.
 
-% Remplace l'ancien plateau par le nouveau
+% Remplace l ancien plateau par le nouveau
 applyIt(Old, New) :-
     retract(board(Old)),
     assert(board(New)).

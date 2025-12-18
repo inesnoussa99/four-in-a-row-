@@ -71,7 +71,7 @@ bench_loop(I, N, TX, TO, Alt, MaxMoves,
 
     empty_board(Board0),
 
-    % sécurité : si une partie plante, on la considère abort
+    % securite : si une partie plante, on la considère abort
     ( catch(bench_game(Board0, Start, TX, TO, 0, MaxMoves, Result, MovesInGame), _, fail) ->
         true
     ;   Result = abort,
@@ -88,7 +88,7 @@ update_counts(win('x'), WX0, WO0, D0, Ab0, WX1, WO0, D0, Ab0) :- WX1 is WX0 + 1.
 update_counts(win('o'), WX0, WO0, D0, Ab0, WX0, WO1, D0, Ab0) :- WO1 is WO0 + 1.
 update_counts(draw,     WX0, WO0, D0, Ab0, WX0, WO0, D1, Ab0) :- D1 is D0 + 1.
 update_counts(abort,    WX0, WO0, D0, Ab0, WX0, WO0, D0, Ab1) :- Ab1 is Ab0 + 1.
-update_counts(_,        WX,  WO,  D,  Ab,  WX, WO, D, Ab). % sécurité
+update_counts(_,        WX,  WO,  D,  Ab,  WX, WO, D, Ab). % securite
 
 % =========================
 % Partie (robuste)
