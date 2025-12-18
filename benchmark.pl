@@ -173,7 +173,7 @@ swap_cell('o','x') :- !.
 swap_cell('.','.').
 
 % =========================
-% Gagnant (IMPORTANT : interdit P='.')
+% Gagnant 
 % =========================
 
 winner_player(Board, P) :-
