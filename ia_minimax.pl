@@ -6,6 +6,8 @@
 %       column/3, diag_down/4, diag_up/4, etc.
 %   - 'o' = IA (max), 'x' = humain (min).
 
+:- use_module(library(lists)).
+
 % Profondeur de recherche du minimax
 depth(4).
 

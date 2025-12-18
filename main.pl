@@ -11,7 +11,6 @@
 % Nouvelles IA
 :- [ia_alphabeta].
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Saisie des joueurs    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,9 +44,8 @@ map_choice_to_type(3, ia_v2).
 map_choice_to_type(4, ia_minimax).
 map_choice_to_type(5, ia_alphabeta).
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     Coup des joueurs    %
+%     Coup des joueurs     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Demander un coup à un humain
@@ -59,7 +57,8 @@ ask_move_human(Player, Board, Col) :-
       valid_col(Board, Input)
     ->
         Col = Input
-    ;   writeln('Invalid column, please try again.'),
+    ;
+        writeln('Invalid column, please try again.'),
         ask_move_human(Player, Board, Col)
     ).
 
@@ -67,14 +66,11 @@ ask_move_human(Player, Board, Col) :-
 get_player_type('x', TypeP1, _TypeP2, TypeP1).
 get_player_type('o', _TypeP1, TypeP2, TypeP2).
 
-% ------- Helper: appel d'une IA (sans modules)
-% Appelle directement Type(Board, Player, Col)
-% ex: ia_alphabeta(Board, Player, Col).
+% Helper IA universel
 call_ai(Type, Board, Player, Col) :-
     Goal =.. [Type, Board, Player, Col],
     call(Goal).
 
-% En fonction du type, obtenir le coup
 get_move(human, Player, Board, Col) :-
     ask_move_human(Player, Board, Col).
 
@@ -90,52 +86,6 @@ get_move(ia_minimax, Player, Board, Col) :-
     ia_minimax(Board, Col),
     format("IA minimax (~w) plays in column ~w~n", [Player, Col]).
 
-% --- Nouvelles IA
 get_move(ia_alphabeta, Player, Board, Col) :-
     call_ai(ia_alphabeta, Board, Player, Col),
     format("IA alpha-beta (~w) plays in column ~w~n", [Player, Col]).
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%      Boucle de jeu      %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-play_loop(Player, TypeP1, TypeP2) :-
-    board(Board),
-    displayBoard,
-    get_player_type(Player, TypeP1, TypeP2, Type),
-    format("New turn for: ~w (~w)~n", [Player, Type]),
-    get_move(Type, Player, Board, Col),
-    ( playMove(Board, Col, NewBoard, Player) ->
-        applyIt(Board, NewBoard),
-        ( gameover(NewBoard) ->
-            displayBoard,
-            format("Player ~w wins!~n", [Player]),
-            retractall(board(_))
-        ; board_full(NewBoard) ->
-            displayBoard,
-            writeln('Draw!'),
-            retractall(board(_))
-        ;
-            changePlayer(Player, NextPlayer),
-            play_loop(NextPlayer, TypeP1, TypeP2)
-        )
-    ;
-        writeln('Move failed, retrying.'),
-        play_loop(Player, TypeP1, TypeP2)
-    ).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%          MAIN           %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-main :-
-    writeln('======================'),
-    writeln('       PUISSANCE 4    '),
-    writeln('======================'),
-    writeln('Configure players:'),
-    choose_player('Player 1 = x', TypeP1),
-    choose_player('Player 2 = o', TypeP2),
-    init_board,
-    play_loop('x', TypeP1, TypeP2).
