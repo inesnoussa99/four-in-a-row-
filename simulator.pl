@@ -1,6 +1,6 @@
 % =========================
 % File: simulator.pl
-% Simulation IA vs IA (sans module, robuste, PAS de win('.'))
+% Simulation IA vs IA 
 % =========================
 
 :- [game].
@@ -10,17 +10,8 @@
 :- [ia_alphabeta].
 
 :- use_module(library(random)).
-:- use_module(library(apply)).   % maplist/3
+:- use_module(library(apply)).   
 
-% -------------------------
-% API :
-%   simulate_game(+TypeX,+TypeO,+StartPlayer,-Result)
-%   simulate_games(+TypeX,+TypeO,+N,+AltStart,-Summary)
-%   print_summary(+Summary)
-%
-% Result  = win('x') | win('o') | draw
-% Summary = summary(WX, WO, D)
-% -------------------------
 
 simulate_games(TypeX, TypeO, N, AltStart, summary(WX, WO, D)) :-
     simulate_games_(1, N, TypeX, TypeO, AltStart, 0, 0, 0, WX, WO, D), !.
@@ -141,7 +132,7 @@ swap_cell('o','x') :- !.
 swap_cell('.','.').
 
 % =========================
-% Gagnant (IMPORTANT : interdit P='.')
+% Gagnant
 % =========================
 
 winner_player(Board, P) :-
