@@ -1,9 +1,3 @@
-% =========================
-% main.pl
-% Point d'entrée du programme :
-% - On choisit le type de joueur pour 'x' (Joueur 1) et pour 'o' (Joueur 2)
-% - Puis on lance la partie avec ces deux "contrôleurs" (humain ou IA).
-
 :- [game].
 :- [ia_v1].
 :- [ia_v2].
@@ -55,14 +49,6 @@ ask_move_human(Player, Board, Col) :-
 get_player_type('x', TypeP1, _TypeP2, TypeP1).
 get_player_type('o', _TypeP1, TypeP2, TypeP2).
 
-% ------- Helper: appel d'une IA (sans modules)
-% Appelle directement Type(Board, Player, Col)
-% ex: ia_alphabeta(Board, Player, Col).
-call_ai(Type, Board, Player, Col) :-
-    Goal =.. [Type, Board, Player, Col],
-    call(Goal).
-
-% swap_board : échange x <-> o pour réutiliser minimax (qui maximise o)
 swap_board(Board, Swapped) :- maplist(swap_row, Board, Swapped).
 swap_row([], []).
 swap_row([H|T], [H2|T2]) :- swap_cell(H, H2), swap_row(T, T2).
@@ -70,7 +56,18 @@ swap_cell('x','o') :- !.
 swap_cell('o','x') :- !.
 swap_cell('.','.').
 
-% ---------- Get move selon type
+% ---------- Appel IA 
+call_ai(ia_v1, Board, Player, Col) :- ia_v1(Board, Player, Col).
+call_ai(ia_v2, Board, Player, Col) :- ia_v2(Board, Player, Col).
+call_ai(ia_alphabeta, Board, Player, Col) :- ia_alphabeta(Board, Player, Col).
+
+% minimax est défini en ia_minimax(Board, BestCol) et suppose que MAX = 'o'
+call_ai(ia_minimax, Board, 'o', Col) :- ia_minimax(Board, Col).
+call_ai(ia_minimax, Board, 'x', Col) :-
+    swap_board(Board, Swapped),
+    ia_minimax(Swapped, Col).
+
+
 get_move(human, Player, Board, Col) :-
     ask_move_human(Player, Board, Col).
 
@@ -92,7 +89,6 @@ play_loop(Player, TypeP1, TypeP2) :-
 
     ( playMove(Board, Col, NewBoard, Player) ->
         applyIt(Board, NewBoard),
-
         ( gameover(NewBoard) ->
             displayBoard,
             format("Player ~w wins!~n", [Player]),
